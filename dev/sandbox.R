@@ -22,3 +22,5 @@ my_data <- readRDS("C:/Users/fguerrero/OneDrive - Linear Chemicals,SLU/Documento
 results <- my_data$L500_WorkListTest
 
 # h_l500_format_curve(results$ABS_Prim, results$ABS_Sec) #No va, hay que usar purrr
+
+class(wr_kp)

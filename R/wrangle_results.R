@@ -12,7 +12,7 @@ wrangle_results <- function(x, ...){
 #' @describeIn wrangle_results method
 #' @export
 wrangle_results.l500_results <- function(x){
-  x %>%
+  wrangled <- x %>%
     dplyr::select(
       sample = "SampleID",
       method = "Method",
@@ -25,13 +25,17 @@ wrangle_results.l500_results <- function(x){
     dplyr::relocate(
       "date", "method", "instrument", "sample", "result"
     )
+
+  class(wrangled) <- c("wrangled_results", class(wrangled))
+
+  wrangled
 }
 
 #' @describeIn wrangle_results method
 #' @export
 wrangle_results.sk_results <- function(x){
 
-  x %>%
+  wrangled <- x %>%
     dplyr::mutate(
       instrument = "Sekisui",
       date = lubridate::as_date(.data$RDATE),
@@ -46,6 +50,10 @@ wrangle_results.sk_results <- function(x){
       "sample",
       "result" = "RESULT"
     )
+
+  class(wrangled) <- c("wrangled_results", class(wrangled))
+
+  wrangled
 }
 
 #' @describeIn wrangle_results method
@@ -57,7 +65,7 @@ wrangle_results.kr_results <- function(x, instrument = c("Kroma", "Kroma Plus"))
 
   instrument <- rlang::arg_match(instrument)
 
-  x %>%
+  wrangled <- x %>%
     dplyr::mutate(
       date = lubridate::as_date(.data$timeStamp),
       instrument = .env$instrument
@@ -69,4 +77,7 @@ wrangle_results.kr_results <- function(x, instrument = c("Kroma", "Kroma Plus"))
       sample = "sampleBarCode",
       result = "FinalResult"
     )
+  class(wrangled) <- c("wrangled_results", class(wrangled))
+
+  wrangled
 }

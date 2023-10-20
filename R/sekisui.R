@@ -11,4 +11,3 @@ imp_sk_results <- function(conn = connect_to_sk_dbi()){
 
   results
 }
-
