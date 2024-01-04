@@ -59,7 +59,7 @@ connect_to_sk_dbi <- function( user = "fguerrero" ){
 }
 
 #' @rdname connect_to_l500_dbi
-connect_to_kr_dbi <- function(db_file_path = "D:/OppLocal.mdb")  {
+connect_to_kr_dbi <- function(db_file_path = "D:/OppLocal - KP.mdb")  {
   # make sure that the file exists before attempting to connect
   if (!file.exists(db_file_path)) {
     stop("DB file does not exist at ", db_file_path)

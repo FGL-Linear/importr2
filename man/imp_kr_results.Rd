@@ -10,7 +10,7 @@ imp_kr_results(conn = connect_to_kr_dbi())
 \item{conn}{a connection object like the one returned from connect_to_kr_dbi}
 }
 \value{
-a tibble
+a tibble of class "kr_results"
 }
 \description{
 Import results from Kroma or Kroma Plus database.

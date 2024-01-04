@@ -86,6 +86,26 @@ imp_l500_archive <- function(conn = connect_to_l500_dbi()){
     )
 }
 
+
+#' Import calibration results from Lida 500 database.
+#'
+#' @param item_names A character vector of ITEM_NAMEs as found in Sekisui database.
+#' @param conn a connection object like the one returned from connect_to_sk_dbi
+#'
+#' @return a tibble of class "l500_cal"
+#' @export
+imp_l500_cal <- function(item_names, conn = connect_to_l500_dbi()){
+  out <- dplyr::tbl(conn_l500, "Calibrate") %>%
+    dplyr::filter(Method %in% item_names) %>%
+    dplyr::collect() %>%
+    dplyr::filter(CaliNo == max(CaliNo))
+
+  class(out) <- c("l500_cal", class(out))
+
+  out
+}
+
+
 #' Format Lida 500 reaction curves
 #'
 #' @param ABS_Prim vector of primary wavelength absorbance

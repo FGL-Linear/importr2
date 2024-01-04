@@ -16,7 +16,7 @@ h_rm_trailing_numbers <- function(x){
 
 #' Standardize method names from multiple instruments
 #'
-#' @param x WIP return value from wrangle_results()?
+#' @param x WIP return value from wrangle_results()? also works with wrangled_cal()
 #'
 #' @return A character vector without trailing numbers
 #' @export

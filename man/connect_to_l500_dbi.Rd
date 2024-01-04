@@ -10,7 +10,7 @@ connect_to_l500_dbi(db_file_path = "D:/Analyzer.mdb")
 
 connect_to_sk_dbi(user = "fguerrero")
 
-connect_to_kr_dbi(db_file_path = "D:/OppLocal.mdb")
+connect_to_kr_dbi(db_file_path = "D:/OppLocal - KP.mdb")
 }
 \arguments{
 \item{db_file_path}{path to database file (.mdb)}
