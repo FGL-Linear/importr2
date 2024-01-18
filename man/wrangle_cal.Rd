@@ -13,7 +13,7 @@ wrangle_cal(x, ...)
 
 \method{wrangle_cal}{sk_cal}(x)
 
-\method{wrangle_cal}{kr_cal}(x)
+\method{wrangle_cal}{kr_cal}(x, instrument = c("Kroma", "Kroma Plus"))
 }
 \arguments{
 \item{x}{data imported from an instrument database}

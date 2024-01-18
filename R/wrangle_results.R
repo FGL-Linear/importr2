@@ -16,6 +16,7 @@ wrangle_results.l500_results <- function(x){
     dplyr::select(
       sample = "SampleID",
       method = "Method",
+      od = "OD",
       result = "Result",
       date = "TestDate"
     ) %>%
@@ -23,7 +24,7 @@ wrangle_results.l500_results <- function(x){
       instrument = "Lida 500"
     ) %>%
     dplyr::relocate(
-      "date", "method", "instrument", "sample", "result"
+      "date", "method", "instrument", "sample", "od", "result"
     )
 
   class(wrangled) <- c("wrangled_results", class(wrangled))
@@ -44,11 +45,12 @@ wrangle_results.sk_results <- function(x){
 
     ) %>%
     dplyr::select(
-      "date",
-      "method" = "ITEM_NAME",
-      "instrument",
-      "sample",
-      "result" = "RESULT"
+      date,
+      method = "ITEM_NAME",
+      instrument,
+      sample,
+      od = "ABS",
+      result = "RESULT"
     )
 
   class(wrangled) <- c("wrangled_results", class(wrangled))
@@ -75,6 +77,7 @@ wrangle_results.kr_results <- function(x, instrument = c("Kroma", "Kroma Plus"))
       method = "methodName",
       instrument,
       sample = "sampleBarCode",
+      od = od,
       result = "FinalResult"
     )
   class(wrangled) <- c("wrangled_results", class(wrangled))

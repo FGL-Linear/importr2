@@ -22,7 +22,7 @@ imp_l500_results <- function(conn = connect_to_l500_dbi()){
     dplyr::mutate(
       TestDate = lubridate::as_date(.data$End_Time)
     ) %>%
-    dplyr::select(-.data$End_Time)
+    dplyr::select(-End_Time)
 
   selected_archive <- data_archive %>%
     dplyr::select(dplyr::all_of(c(common_cols, arch_extra_cols))) %>%

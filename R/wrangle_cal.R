@@ -57,7 +57,8 @@ wrangle_cal.kr_cal <- function(x, instrument = c("Kroma", "Kroma Plus")){
     dplyr::select(
       method = Name,
       value = stdValue,
-      od = stdOD) %>%
+      od = stdOD
+      ) %>%
     dplyr::mutate(
       instrument = .env$instrument
     )
