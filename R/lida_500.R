@@ -1,40 +1,65 @@
 #' Import results from Lida 500 database.
 #'
 #' @param conn a connection object like the one returned from connect_to_l500_dbi
+#' @param tables the tables to import from
 #'
 #' @return imp_l500_worklisttest imports results currently stored in WorkListTest table.
 #' imp_l500_archive imports archived results.
-#' imp_l500_results imports results from both tables.
+#' imp_l500_results can import from either or both tables.
 #' @export
-imp_l500_results <- function(conn = connect_to_l500_dbi()){
+imp_l500_results <- function(
+    conn = connect_to_l500_dbi(),
+    tables = c("all", "worklist", "archive")
+    ){
 
-  data_wl <- imp_l500_worklisttest(conn)
-  data_archive <- imp_l500_archive(conn)
+  tables <- rlang::arg_match(tables)
 
   common_cols <- c("SampleID", "Method", "Stat", "Result", "Result_Retest", "OD",
                    "Unit", "ABS_Prim", "ABS_Sec", "Blank")
 
-  wl_extra_cols <- c("End_Time", "Repeat_Index")
-  arch_extra_cols <- c("TestDate", "ResultIndex")
+  if(tables %in% c("all", "worklist")){
 
-  selected_wl <- data_wl %>%
-    dplyr::select(dplyr::all_of(c(common_cols, wl_extra_cols))) %>%
-    dplyr::mutate(
-      TestDate = lubridate::as_date(.data$End_Time)
+    wl_extra_cols <- c("End_Time", "Repeat_Index")
+
+    data_wl <- imp_l500_worklisttest(conn)
+
+    selected_wl <- data_wl %>%
+      dplyr::select(dplyr::all_of(c(common_cols, wl_extra_cols))) %>%
+      dplyr::mutate(
+        TestDate = lubridate::as_date(.data$End_Time)
+      ) %>%
+      dplyr::select(-End_Time)
+  }
+
+  if(tables %in% c("all", "archive")){
+
+    arch_extra_cols <- c("TestDate", "ResultIndex")
+
+    data_archive <- imp_l500_archive(conn)
+
+    selected_archive <- data_archive %>%
+      dplyr::select(dplyr::all_of(c(common_cols, arch_extra_cols))) %>%
+      dplyr::rename(Repeat_Index = "ResultIndex") %>%
+      dplyr::mutate(
+        TestDate = lubridate::as_date(.data$TestDate)
+      )
+
+  }
+
+  if(tables == "worklist"){
+    results <- selected_wl
+  }
+
+  if(tables == "archive"){
+    results <- selected_archive
+  }
+
+  if(tables == "all"){
+    results <- dplyr::bind_rows(
+      selected_wl, selected_archive
     ) %>%
-    dplyr::select(-End_Time)
-
-  selected_archive <- data_archive %>%
-    dplyr::select(dplyr::all_of(c(common_cols, arch_extra_cols))) %>%
-    dplyr::rename(Repeat_Index = "ResultIndex") %>%
-    dplyr::mutate(
-      TestDate = lubridate::as_date(.data$TestDate)
-    )
-
-  results <- dplyr::bind_rows(
-    selected_wl, selected_archive
-  ) %>%
-    dplyr::filter(!is.na(.data$OD))
+      dplyr::filter(!is.na(.data$OD))
+  }
 
   class(results) <- c("l500_results", class(results))
 
@@ -89,7 +114,7 @@ imp_l500_archive <- function(conn = connect_to_l500_dbi()){
 
 #' Import calibration results from Lida 500 database.
 #'
-#' @param item_names A character vector of ITEM_NAMEs as found in Sekisui database.
+#' @param item_names A character vector of ITEM_NAMEs as found in Lida 500 database.
 #' @param conn a connection object like the one returned from connect_to_sk_dbi
 #'
 #' @return a tibble of class "l500_cal"
