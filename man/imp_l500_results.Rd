@@ -6,7 +6,10 @@
 \alias{imp_l500_archive}
 \title{Import results from Lida 500 database.}
 \usage{
-imp_l500_results(conn = connect_to_l500_dbi())
+imp_l500_results(
+  conn = connect_to_l500_dbi(),
+  tables = c("all", "worklist", "archive")
+)
 
 imp_l500_worklisttest(conn = connect_to_l500_dbi())
 
@@ -14,11 +17,13 @@ imp_l500_archive(conn = connect_to_l500_dbi())
 }
 \arguments{
 \item{conn}{a connection object like the one returned from connect_to_l500_dbi}
+
+\item{tables}{the tables to import from}
 }
 \value{
 imp_l500_worklisttest imports results currently stored in WorkListTest table.
 imp_l500_archive imports archived results.
-imp_l500_results imports results from both tables.
+imp_l500_results can import from either or both tables.
 }
 \description{
 Import results from Lida 500 database.

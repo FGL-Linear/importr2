@@ -7,7 +7,7 @@
 imp_l500_cal(item_names, conn = connect_to_l500_dbi())
 }
 \arguments{
-\item{item_names}{A character vector of ITEM_NAMEs as found in Sekisui database.}
+\item{item_names}{A character vector of ITEM_NAMEs as found in Lida 500 database.}
 
 \item{conn}{a connection object like the one returned from connect_to_sk_dbi}
 }
