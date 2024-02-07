@@ -70,4 +70,35 @@ res_sk %>%
   dplyr::left_join(Calib, by = dplyr::join_by(closest(RST_DATE >= RDATE))) %>%
   dplyr::select(date_result, RST_DATE, RDATE, STD_NO)
 
-usethis::use_version()
+#### borrador para validar calibraciones ----
+
+
+res_sk <- imp_sk_results() %>%
+  dplyr::filter(RDATE > "2024-01-02", S_RND_NO == 6, ITEM_NAME == "DBILDPD")
+
+
+
+cal_sk <- imp_sk_caldata(unique(res_sk$ITEM_NAME))
+
+res_sk_wr <- wrangle_results(res_sk)
+
+cal_sk_wr <- wrangle_cal(cal_sk)
+
+res_sk_wr
+cal_sk_wr
+
+reg_coef <- coef(lm(cal_sk_wr$od ~ cal_sk_wr$value))
+
+cal_val <- res_sk_wr %>%
+  dplyr::mutate(
+    od_val = reg_coef[1] + reg_coef[2] * result
+  )
+
+all.equal(cal_val$od, cal_val$od_val, tolerance = 10^-4)
+
+#### ----
+####
+
+x <- imp_csv_sk_res("C:/Users/fguerrero/OneDrive - Linear Chemicals,SLU/Documentos/R/importr/inst/extdata/sekisui_results.csv")
+x <- imp_csv_kr_res("C:/Users/fguerrero/OneDrive - Linear Chemicals,SLU/Documentos/R/importr/inst/extdata/kroma_results.csv")
+instrument <- "Kroma"

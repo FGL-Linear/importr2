@@ -91,9 +91,8 @@ fct_meanSek <- function(x){
 
 }
 
-# New ----
-
 #' Convert ITEM_NAME to ITEM_NO for Sekisui SK500 database
+#' `r lifecycle::badge('experimental')`
 #'
 #' @param item_names
 #' @param conn a connection object like the one returned from connect_to_sk_dbi
@@ -195,5 +194,3 @@ imp_sk_calrep <- function(x, conn = connect_to_sk_dbi()){
 
   out
 }
-
-

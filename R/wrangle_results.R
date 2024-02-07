@@ -84,3 +84,55 @@ wrangle_results.kr_results <- function(x, instrument = c("Kroma", "Kroma Plus"))
 
   wrangled
 }
+
+wrangle_results.csv_sk_res <- function(x){
+# NUEVO, pendiente de testear ----
+  wrangled <- x %>%
+    dplyr::mutate(
+      instrument = "Sekisui",
+      date = lubridate::as_date(.data$`Date/Title`),
+      sample = stringr::str_c(.data$date, .data$S_RND_NO, .data$SAMP_NO
+                              , sep = "_"),
+
+    ) %>%
+    dplyr::select(
+      date,
+      method = "Test",
+      instrument,
+      sample,
+      od = `Abs./Slope`,
+      result = "Result"
+    )
+
+  class(wrangled) <- c("wrangled_results", class(wrangled))
+
+  wrangled
+}
+
+#' @describeIn wrangle_results method
+#' @param instrument either "Kroma" or "Kroma Plus"
+#' @export
+wrangle_results.csv_kr_res <- function(x, instrument = c("Kroma", "Kroma Plus")){
+
+  stopifnot('argument "instrument" is missing.' = !missing(instrument))
+
+  instrument <- rlang::arg_match(instrument)
+
+  wrangled <- x %>%
+    dplyr::mutate(
+      date = lubridate::as_date(DateTime),
+      instrument = .env$instrument,
+      od = NA_real_
+    ) %>%
+    dplyr::select(
+      date,
+      method = "Test",
+      instrument,
+      sample = "Sample",
+      od,
+      result = "Result"
+    )
+  class(wrangled) <- c("wrangled_results", class(wrangled))
+
+  wrangled
+}
