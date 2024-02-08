@@ -14,10 +14,10 @@ imp_sk_rc(x, ...)
 \method{imp_sk_rc}{sk_results}(x)
 }
 \arguments{
-\item{x}{a vector of numbers}
+\item{x}{Describir...}
 }
 \value{
-A single number.
+a tibble of class "sk_rc".
 }
 \description{
 Import reaction curves from Sekisui SK500

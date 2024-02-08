@@ -2,7 +2,7 @@
 % Please edit documentation in R/sekisui.R
 \name{imp_sk_caldata}
 \alias{imp_sk_caldata}
-\title{Import calibration data from Sekisui for given methods.
+\title{Import current calibration data from Sekisui for given methods.
 `r lifecycle::badge('experimental')`}
 \usage{
 imp_sk_caldata(item_names, conn = connect_to_sk_dbi())
@@ -16,6 +16,6 @@ imp_sk_caldata(item_names, conn = connect_to_sk_dbi())
 a tibble of class "sk_cal"
 }
 \description{
-Import calibration data from Sekisui for given methods.
+Import current calibration data from Sekisui for given methods.
 `r lifecycle::badge('experimental')`
 }
