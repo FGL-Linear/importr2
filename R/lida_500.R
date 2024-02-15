@@ -61,9 +61,12 @@ imp_l500_results <- function(
       dplyr::filter(!is.na(.data$OD))
   }
 
-  class(results) <- c("l500_results", class(results))
+  out <- results %>%
+    tidyr::unite("id_rc", SampleID, Repeat_Index, Method, TestDate, sep = "", remove = FALSE)
 
-  results
+  class(out) <- c("l500_results", class(out))
+
+  out
 }
 
 #' @rdname imp_l500_results

@@ -63,6 +63,7 @@ h_recal_from_results <- function(result, od, target_old, target_new){
   recal_coef[1] + recal_coef[2]*od
 }
 
+#' @export
 h_repair_space <- function(x){
   stringr::str_replace_all(x, pattern = "[[:space:]]", replacement = " ")
 }

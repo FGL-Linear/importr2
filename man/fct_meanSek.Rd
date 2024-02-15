@@ -2,7 +2,7 @@
 % Please edit documentation in R/sekisui.R
 \name{fct_meanSek}
 \alias{fct_meanSek}
-\title{Compute a mean like sekisui SK500 (drop one, mean of the rest)
+\title{Compute a mean like sekisui SK500 (drop the farthest value from the mean)
 `r lifecycle::badge('stable')`}
 \usage{
 fct_meanSek(x)
@@ -14,6 +14,6 @@ fct_meanSek(x)
 A single number.
 }
 \description{
-Compute a mean like sekisui SK500 (drop one, mean of the rest)
+Compute a mean like sekisui SK500 (drop the farthest value from the mean)
 `r lifecycle::badge('stable')`
 }

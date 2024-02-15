@@ -1,3 +1,16 @@
+# Use the 'Tidy Modeling with R' (https://www.tmwr.org/) book as main reference
+# Use the 'R for Data Science' (https://r4ds.had.co.nz/) book as main reference
+# Use the 'Advanced R' (https://adv-r.hadley.nz/) book as main reference
+# Use tidyverse packages: readr, ggplot2, dplyr, tidyr
+# Avoid explanations unless requested by user, expecting code only
+# For any line that is not code, prefix with a: #
+# DO NOT use Markdown for the code
+
+# These functions are used to import data from Sekisui SK500 database.
+# sk is the prefix for Sekisui functions.
+# imp is the prefix for import functions.
+# rc is the prefix for reaction curve functions.
+
 #' Import results from Sekisui database.
 #' `r lifecycle::badge('stable')`
 #'
@@ -9,10 +22,9 @@ imp_sk_results <- function(conn = connect_to_sk_dbi()){
 
   results <- dplyr::collect(dplyr::tbl(conn, "ResultLog"))
 
-  class(results) <- c("sk_results", class(results))
-
-  results
+  structure(results, class = c("sk_results", class(results)))
 }
+
 
 #' Import current calibration data from Sekisui for given methods.
 #' `r lifecycle::badge('experimental')`
@@ -69,12 +81,12 @@ imp_sk_caldata <- function(item_names, conn = connect_to_sk_dbi()){
 
    out <- dplyr::left_join(cal_od, cal_value, by = dplyr::join_by(ITEM_NO, CAL))
 
-   class(out) <- c("sk_cal", class(out))
+   structure(out, class = c("sk_cal", class(out)))
 
    out
 }
 
-#' Compute a mean like sekisui SK500 (drop one, mean of the rest)
+#' Compute a mean like sekisui SK500 (drop the farthest value from the mean)
 #' `r lifecycle::badge('stable')`
 #'
 #' @param x a vector of numbers
@@ -82,6 +94,8 @@ imp_sk_caldata <- function(item_names, conn = connect_to_sk_dbi()){
 #' @return A single number.
 #' @export
 fct_meanSek <- function(x){
+  # This function is used to compute the mean of three replicates after
+  # dropping the value that is farthest from the mean.
 
   if(length(x) == 1) { return( x ) }
 
@@ -118,7 +132,7 @@ imp_sk_rc <- function(x, ...){
 
 #' @describeIn imp_sk_rc method
 #' @export
-imp_sk_rc.integer <- function(x){
+imp_sk_rc.integer <- function(x){ # Integer porque x es un vector de RC_NO
 
   out <- dplyr::tbl(conn_sk, "RC_OD") %>%
     dplyr::filter(RC_NO %in% x) %>%
@@ -131,7 +145,7 @@ imp_sk_rc.integer <- function(x){
 
   }
 
-  class(out) <- c("sk_rc", class(out))
+  struc <- structure(out, class = c("sk_rc", class(out)))
 
   out
 
@@ -190,7 +204,7 @@ imp_sk_calrep <- function(x, conn = connect_to_sk_dbi()){
     ) %>%
     dplyr::left_join(imp_res, dplyr::join_by(ITEM_NO, RDATE))
 
-  class(out) <- c("sk_cal_rep", "sk_results", class(out))
+  structure(out, class = c("sk_cal_rep", class(out)))
 
   out
 }

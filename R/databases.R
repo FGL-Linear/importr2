@@ -77,3 +77,19 @@ connect_to_kr_dbi <- function(db_file_path = "D:/OppLocal - KP.mdb")  {
 
   return(myconn)
 }
+
+#' @rdname connect_to_l500_dbi
+connect_to_l300_dbi <- function(db_file_path = "D:/Chemray280.db"){
+  # make sure that the file exists before attempting to connect
+  if (!file.exists(db_file_path)) {
+    stop("DB file does not exist at ", db_file_path)
+  }
+
+  myconn <- DBI::dbConnect(
+    RSQLite::SQLite(),
+    db_file_path,
+    timeout = 10
+  )
+
+  return(myconn)
+}

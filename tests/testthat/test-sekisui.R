@@ -14,3 +14,18 @@ test_that("imp_sk_results works", {
   )
 
 })
+
+test_that("fct_meanSek works", {
+
+  expect_equal(
+    fct_meanSek(c(3, 3, 4)),
+    3
+  )
+
+  expect_equal(
+    fct_meanSek(c(3, 3, 4, 5)),
+    mean(c(3, 3, 4))
+  )
+
+
+})

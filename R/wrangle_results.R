@@ -9,13 +9,25 @@ wrangle_results <- function(x, ...){
   UseMethod("wrangle_results")
 }
 
+validate_wrangled_results <- function(x){
+  stopifnot("wrangled_results" %in% class(x))
+
+  expected_colnames <- c("date", "method", "instrument", "sample", "od", "result")
+
+  stopifnot(all(colnames(x) %in% expected_colnames))
+  stopifnot(all(expected_colnames %in% colnames(x)))
+
+  x
+}
+
 #' @describeIn wrangle_results method
 #' @export
 wrangle_results.l500_results <- function(x){
-  wrangled <- x %>%
+  wrangled <- x  %>%
     dplyr::select(
       sample = "SampleID",
       method = "Method",
+      id_rc,
       od = "OD",
       result = "Result",
       date = "TestDate"
@@ -24,7 +36,7 @@ wrangle_results.l500_results <- function(x){
       instrument = "Lida 500"
     ) %>%
     dplyr::relocate(
-      "date", "method", "instrument", "sample", "od", "result"
+      "date", "method", "instrument", "sample", "id_rc", "od", "result"
     )
 
   class(wrangled) <- c("wrangled_results", class(wrangled))
@@ -42,6 +54,7 @@ wrangle_results.sk_results <- function(x){
       date = lubridate::as_date(.data$RDATE),
       sample = stringr::str_c(.data$date, .data$S_RND_NO, .data$SAMP_NO
                               , sep = "_"),
+      id_rc = as.character(RC_NO)
 
     ) %>%
     dplyr::select(
@@ -49,6 +62,7 @@ wrangle_results.sk_results <- function(x){
       method = "ITEM_NAME",
       instrument,
       sample,
+      id_rc,
       od = "ABS",
       result = "RESULT"
     )
@@ -70,13 +84,15 @@ wrangle_results.kr_results <- function(x, instrument = c("Kroma", "Kroma Plus"))
   wrangled <- x %>%
     dplyr::mutate(
       date = lubridate::as_date(.data$timeStamp),
-      instrument = .env$instrument
+      instrument = .env$instrument,
+      id_rc = as.character(.data$idArchive)
     ) %>%
     dplyr::select(
       date,
       method = "methodName",
       instrument,
       sample = "sampleBarCode",
+      id_rc,
       od = od,
       result = "FinalResult"
     )
@@ -132,6 +148,70 @@ wrangle_results.csv_kr_res <- function(x, instrument = c("Kroma", "Kroma Plus"))
       od,
       result = "Result"
     )
+  class(wrangled) <- c("wrangled_results", class(wrangled))
+
+  wrangled
+}
+
+#' @describeIn wrangle_results method
+#' @export
+wrangle_results.l300_results <- function(x){
+  wrangled <- x %>%
+    dplyr::mutate(
+      id_rc = paste0("res",lTestDate,lTestTime),
+      instrument = "Lida 300",
+      od = NA_real_,
+      result = fResult,
+      date = lubridate::ymd(as.character(lMadeDate))
+    ) %>%
+    dplyr::select(
+      date,
+      method = ItemName,
+      instrument,
+      sample = SplID,
+      id_rc,
+      od,
+      result
+    ) %>%
+    dplyr::mutate(
+      instrument = "Lida 300"
+    ) %>%
+    dplyr::relocate(
+      "date", "method", "instrument", "sample", "id_rc", "od", "result"
+    )
+
+  class(wrangled) <- c("wrangled_results", class(wrangled))
+
+  wrangled
+}
+
+#' @describeIn wrangle_results method
+#' @export
+wrangle_results.l300_qc <- function(x){
+  wrangled <- x %>%
+    dplyr::mutate(
+      id_rc = paste0("qc",lTestDate,lTestTime),
+      instrument = "Lida 300",
+      od = NA_real_,
+      result = fResult,
+      date = lubridate::ymd(as.character(lMadeDate))
+    ) %>%
+    dplyr::select(
+      date,
+      method = ItemName,
+      instrument,
+      sample = BatchNo,
+      id_rc,
+      od,
+      result
+    ) %>%
+    dplyr::mutate(
+      instrument = "Lida 300"
+    ) %>%
+    dplyr::relocate(
+      "date", "method", "instrument", "sample", "id_rc", "od", "result"
+    )
+
   class(wrangled) <- c("wrangled_results", class(wrangled))
 
   wrangled

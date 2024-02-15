@@ -4,6 +4,7 @@
 \alias{connect_to_l500_dbi}
 \alias{connect_to_sk_dbi}
 \alias{connect_to_kr_dbi}
+\alias{connect_to_l300_dbi}
 \title{Connect to an instrument database}
 \usage{
 connect_to_l500_dbi(db_file_path = "D:/Analyzer.mdb")
@@ -11,6 +12,8 @@ connect_to_l500_dbi(db_file_path = "D:/Analyzer.mdb")
 connect_to_sk_dbi(user = "fguerrero")
 
 connect_to_kr_dbi(db_file_path = "D:/OppLocal - KP.mdb")
+
+connect_to_l300_dbi(db_file_path = "D:/Chemray280.db")
 }
 \arguments{
 \item{db_file_path}{path to database file (.mdb)}

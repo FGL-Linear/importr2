@@ -6,6 +6,8 @@
 \alias{wrangle_results.sk_results}
 \alias{wrangle_results.kr_results}
 \alias{wrangle_results.csv_kr_res}
+\alias{wrangle_results.l300_results}
+\alias{wrangle_results.l300_qc}
 \title{Wrangle results imported from different instrument databases into a common data structure}
 \usage{
 wrangle_results(x, ...)
@@ -17,6 +19,10 @@ wrangle_results(x, ...)
 \method{wrangle_results}{kr_results}(x, instrument = c("Kroma", "Kroma Plus"))
 
 \method{wrangle_results}{csv_kr_res}(x, instrument = c("Kroma", "Kroma Plus"))
+
+\method{wrangle_results}{l300_results}(x)
+
+\method{wrangle_results}{l300_qc}(x)
 }
 \arguments{
 \item{x}{data imported from an instrument database}
@@ -40,5 +46,9 @@ Wrangle results imported from different instrument databases into a common data 
 \item \code{wrangle_results(kr_results)}: method
 
 \item \code{wrangle_results(csv_kr_res)}: method
+
+\item \code{wrangle_results(l300_results)}: method
+
+\item \code{wrangle_results(l300_qc)}: method
 
 }}
