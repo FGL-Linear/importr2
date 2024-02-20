@@ -67,3 +67,21 @@ wrangle_cal.kr_cal <- function(x, instrument = c("Kroma", "Kroma Plus")){
 
   wrangled
 }
+
+#' @describeIn wrangle_cal method
+#' @export
+wrangle_cal.l300_cal <- function(x){
+
+  wrangled <- x %>%
+    dplyr::select(
+      method = ItemName,
+      value = fRefValue,
+      od = fODValue) %>%
+    dplyr::mutate(
+      instrument = "Lida 300"
+    )
+
+  class(wrangled) <- c("wrangled_cal", class(wrangled))
+
+  wrangled
+}
