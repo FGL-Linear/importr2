@@ -102,3 +102,7 @@ all.equal(cal_val$od, cal_val$od_val, tolerance = 10^-4)
 x <- imp_csv_sk_res("C:/Users/fguerrero/OneDrive - Linear Chemicals,SLU/Documentos/R/importr/inst/extdata/sekisui_results.csv")
 x <- imp_csv_kr_res("C:/Users/fguerrero/OneDrive - Linear Chemicals,SLU/Documentos/R/importr/inst/extdata/kroma_results.csv")
 instrument <- "Kroma"
+
+
+#### ----
+

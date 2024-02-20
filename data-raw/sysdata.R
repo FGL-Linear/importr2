@@ -4,3 +4,4 @@ methods_dictionary <- xlsx::read.xlsx2(here::here("dev", "methods.xlsx"), sheetI
   tibble::as_tibble()
 
 usethis::use_data(methods_dictionary, internal = TRUE, overwrite = TRUE)
+

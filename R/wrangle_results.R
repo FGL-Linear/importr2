@@ -160,7 +160,7 @@ wrangle_results.l300_results <- function(x){
     dplyr::mutate(
       id_rc = paste0("res",lTestDate,lTestTime),
       instrument = "Lida 300",
-      od = NA_real_,
+      od = fOD,
       result = fResult,
       date = lubridate::ymd(as.character(lMadeDate))
     ) %>%
