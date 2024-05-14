@@ -5,6 +5,7 @@
 \alias{wrangle_results.l500_results}
 \alias{wrangle_results.sk_results}
 \alias{wrangle_results.kr_results}
+\alias{wrangle_results.csv_sk_res}
 \alias{wrangle_results.csv_kr_res}
 \alias{wrangle_results.l300_results}
 \alias{wrangle_results.l300_qc}
@@ -17,6 +18,8 @@ wrangle_results(x, ...)
 \method{wrangle_results}{sk_results}(x)
 
 \method{wrangle_results}{kr_results}(x, instrument = c("Kroma", "Kroma Plus"))
+
+\method{wrangle_results}{csv_sk_res}(x)
 
 \method{wrangle_results}{csv_kr_res}(x, instrument = c("Kroma", "Kroma Plus"))
 
@@ -44,6 +47,8 @@ Wrangle results imported from different instrument databases into a common data 
 \item \code{wrangle_results(sk_results)}: method
 
 \item \code{wrangle_results(kr_results)}: method
+
+\item \code{wrangle_results(csv_sk_res)}: method
 
 \item \code{wrangle_results(csv_kr_res)}: method
 

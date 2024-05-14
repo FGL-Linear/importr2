@@ -119,6 +119,25 @@ h_sk_item_name_to_no <- function(item_names, conn = connect_to_sk_dbi()){
     dplyr::pull(ITEM_NO)
 }
 
+#' Join the RC imported data from Sekisui to sk_results and generates an id_rc
+#' `r lifecycle::badge('experimental')`
+#'
+#' @param x RC imported data from Sekisui.
+#' @param sk_res object of class "sk_results".
+#'
+#' @return x with a new column of generated "id_rc"
+#' @export
+h_sk_join_rc_res <- function(x, sk_res){
+  x %>%
+    dplyr::left_join(sk_res, by = dplyr::join_by(RC_NO)) %>%
+    dplyr::select("RC_NO", "CYCLE", "COL1_SEL", "COL2_SEL", "RDATE") %>%
+    dplyr::mutate(
+      date = lubridate::as_date(RDATE)
+    ) %>%
+    tidyr::unite(id_rc, RC_NO, date, remove = FALSE) %>%
+    dplyr::select(-date)
+}
+
 #' Import reaction curves from Sekisui SK500
 #' `r lifecycle::badge('experimental')`
 #'
@@ -126,17 +145,21 @@ h_sk_item_name_to_no <- function(item_names, conn = connect_to_sk_dbi()){
 #'
 #' @return a tibble of class "sk_rc".
 #' @export
-imp_sk_rc <- function(x, ...){
+imp_sk_rc <- function(x, conn = connect_to_sk_dbi(), ...){
   UseMethod("imp_sk_rc")
 }
 
 #' @describeIn imp_sk_rc method
 #' @export
-imp_sk_rc.integer <- function(x){ # Integer porque x es un vector de RC_NO
+imp_sk_rc.numeric <- function(x, conn = connect_to_sk_dbi()){ # Numeric porque x es un vector de RC_NO
 
-  out <- dplyr::tbl(conn_sk, "RC_OD") %>%
+  sk_res <- imp_sk_results() %>%
+    dplyr::filter(RC_NO %in% x)
+
+  out <- dplyr::tbl(conn, "RC_OD") %>%
     dplyr::filter(RC_NO %in% x) %>%
-    dplyr::collect()
+    dplyr::collect() %>%
+    h_sk_join_rc_res(sk_res)
 
   if(FALSE){
     # For future wrangle
@@ -153,11 +176,12 @@ imp_sk_rc.integer <- function(x){ # Integer porque x es un vector de RC_NO
 
 #' @describeIn imp_sk_rc method
 #' @export
-imp_sk_rc.sk_results <- function(x){
+imp_sk_rc.sk_results <- function(x, conn = connect_to_sk_dbi()){
 
-  out <- dplyr::tbl(conn_sk, "RC_OD") %>%
+  out <- dplyr::tbl(conn, "RC_OD") %>%
     dplyr::filter(RC_NO %in% local(x$RC_NO)) %>%
-    dplyr::collect()
+    dplyr::collect() %>%
+    h_sk_join_rc_res(x)
 
   class(out) <- c("sk_rc", class(out))
 

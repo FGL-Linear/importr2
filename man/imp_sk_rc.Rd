@@ -2,16 +2,16 @@
 % Please edit documentation in R/sekisui.R
 \name{imp_sk_rc}
 \alias{imp_sk_rc}
-\alias{imp_sk_rc.integer}
+\alias{imp_sk_rc.numeric}
 \alias{imp_sk_rc.sk_results}
 \title{Import reaction curves from Sekisui SK500
 `r lifecycle::badge('experimental')`}
 \usage{
-imp_sk_rc(x, ...)
+imp_sk_rc(x, conn = connect_to_sk_dbi(), ...)
 
-\method{imp_sk_rc}{integer}(x)
+\method{imp_sk_rc}{numeric}(x, conn = connect_to_sk_dbi())
 
-\method{imp_sk_rc}{sk_results}(x)
+\method{imp_sk_rc}{sk_results}(x, conn = connect_to_sk_dbi())
 }
 \arguments{
 \item{x}{Describir...}
@@ -25,7 +25,7 @@ Import reaction curves from Sekisui SK500
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{imp_sk_rc(integer)}: method
+\item \code{imp_sk_rc(numeric)}: method
 
 \item \code{imp_sk_rc(sk_results)}: method
 

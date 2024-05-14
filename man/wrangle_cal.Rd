@@ -5,6 +5,7 @@
 \alias{wrangle_cal.l500_cal}
 \alias{wrangle_cal.sk_cal}
 \alias{wrangle_cal.kr_cal}
+\alias{wrangle_cal.l300_cal}
 \title{Wrangle calibration results imported from different instrument databases into a common data structure}
 \usage{
 wrangle_cal(x, ...)
@@ -14,6 +15,8 @@ wrangle_cal(x, ...)
 \method{wrangle_cal}{sk_cal}(x)
 
 \method{wrangle_cal}{kr_cal}(x, instrument = c("Kroma", "Kroma Plus"))
+
+\method{wrangle_cal}{l300_cal}(x)
 }
 \arguments{
 \item{x}{data imported from an instrument database}
@@ -33,5 +36,7 @@ Wrangle calibration results imported from different instrument databases into a 
 \item \code{wrangle_cal(sk_cal)}: method
 
 \item \code{wrangle_cal(kr_cal)}: method
+
+\item \code{wrangle_cal(l300_cal)}: method
 
 }}

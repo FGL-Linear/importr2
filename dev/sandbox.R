@@ -40,7 +40,6 @@ cal_all <- dplyr::bind_rows(
 
 #### ----
 
-
 conn_sk <- connect_to_sk_dbi()
 
 DBI::dbListTables(conn_sk)
