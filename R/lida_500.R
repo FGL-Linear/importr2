@@ -79,6 +79,7 @@ imp_l500_worklisttest <- function(conn = connect_to_l500_dbi()){
 
   tables %>%
     dplyr::mutate(
+      wl = stringr::str_remove(table, "WorkListTest"),
       data = purrr::map(
         .x = .data$table,
         .f = \(x) dplyr::collect(dplyr::tbl(conn, x))
