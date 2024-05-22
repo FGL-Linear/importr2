@@ -10,11 +10,13 @@ DBI::dbDisconnect(conn_kr)
 conn_sk <- connect_to_sk_dbi()
 res_sk <- imp_sk_results(conn_sk)
 cal_sk <- imp_sk_caldata("GLUC", conn_sk)
+items_sk <- imp_sk_items(conn_sk)
 DBI::dbDisconnect(conn_sk)
 
 conn_l500 <- connect_to_l500_dbi()
 res_l500 <- imp_l500_results(conn_l500)
 cal_l500 <- imp_l500_cal("CRP TURBI")
+items_l500 <- imp_l500_items(conn_l500)
 DBI::dbDisconnect(conn_l500)
 
 res_all <- dplyr::bind_rows(
@@ -35,6 +37,12 @@ cal_all <- dplyr::bind_rows(
   wrangle_cal(cal_kr, "Kroma"),
   wrangle_cal(cal_sk),
   wrangle_cal(cal_l500)
+) %>%
+  h_clean_methods()
+
+items_all <- dplyr::bind_rows(
+  wrangle_items(items_sk),
+  wrangle_items(items_l500)
 ) %>%
   h_clean_methods()
 
@@ -104,4 +112,12 @@ instrument <- "Kroma"
 
 
 #### ----
+
+l500_res <- imp_l500_results() %>%
+  dplyr::filter(stringr::str_starts(Method, "MgBRtodo")) %>%
+  wrangle_results()
+
+l500_cal <- imp_l500_cal(unique(l500_res$method)) %>%
+  wrangle_cal()
+
 

@@ -83,7 +83,6 @@ imp_sk_caldata <- function(item_names, conn = connect_to_sk_dbi()){
 
    structure(out, class = c("sk_cal", class(out)))
 
-   out
 }
 
 #' Compute a mean like sekisui SK500 (drop the farthest value from the mean)
@@ -114,7 +113,7 @@ fct_meanSek <- function(x){
 #' @return an integer vector of ITEM_NO
 #' @export
 h_sk_item_name_to_no <- function(item_names, conn = connect_to_sk_dbi()){
-  dplyr::tbl(conn_sk, "ITEMPARA") %>%
+  dplyr::tbl(conn, "ITEMPARA") %>%
     dplyr::filter(ITEM_NAME %in% item_names) %>%
     dplyr::pull(ITEM_NO)
 }
@@ -201,7 +200,9 @@ imp_sk_calrep <- function(x, conn = connect_to_sk_dbi()){
 
   stopifnot(inherits(x, "sk_cal"))
 
-  CalData <- dplyr::tbl(conn_sk,  "CalData") %>%
+  item_no <- x$ITEM_NO
+
+  CalData <- dplyr::tbl(conn,  "CalData") %>%
     dplyr::filter(ITEM_NO %in% local(item_no)) %>%
     dplyr::collect()
 
@@ -231,4 +232,52 @@ imp_sk_calrep <- function(x, conn = connect_to_sk_dbi()){
   structure(out, class = c("sk_cal_rep", class(out)))
 
   out
+}
+
+
+# WIP ----
+
+#' Import the item parameters from Sekisui database
+#'
+#' @param conna connection object like the one returned from connect_to_sk_dbi
+#'
+#' @return a tibble of class "sk_items"
+#' @export
+imp_sk_items <- function(conn = connect_to_sk_dbi()){
+
+  tbl_ITEMPARA <- dplyr::collect(dplyr::tbl(conn, "ITEMPARA"))
+  tbl_MasWavelength <- dplyr::collect(dplyr::tbl(conn, "MasWavelength")) %>%
+    dplyr::mutate(Comment = stringr::str_remove(Comment, "nm"))
+  tbl_MasCalibrationMethod <- dplyr::collect(dplyr::tbl(conn, "MasCalibrationMethod"))
+
+  out <- tbl_ITEMPARA %>%
+    dplyr::left_join(
+      dplyr::select(tbl_MasWavelength, COLOR_1 = WavelengthID, wl1 = Comment),
+      by = dplyr::join_by(COLOR_1)
+    ) %>%
+    dplyr::left_join(
+      dplyr::select(tbl_MasWavelength, COLOR_2 = WavelengthID, wl2 = Comment),
+      by = dplyr::join_by(COLOR_2)
+    ) %>%
+    dplyr::left_join(
+      dplyr::select(tbl_MasCalibrationMethod, STD_NAME = CalibrationMethodID, calibration_method = Comment),
+      by = dplyr::join_by(STD_NAME)
+    ) %>%
+    dplyr::left_join(
+      tibble::tibble(
+        TYPE = 1:2,
+        reaction_type = c("Endpoint", "Rate")
+      ),
+      by = dplyr::join_by(TYPE)
+    ) %>%
+    dplyr::left_join(
+      tibble::tibble(
+        BLANK_MODE = 0:1,
+        blank_type = c("Water", "Reagent")
+      ),
+      by = dplyr::join_by(BLANK_MODE)
+    )
+
+  structure(out, class = c("sk_items", class(out)))
+
 }

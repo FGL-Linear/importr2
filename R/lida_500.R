@@ -118,13 +118,19 @@ imp_l500_archive <- function(conn = connect_to_l500_dbi()){
 
 #' Import calibration results from Lida 500 database.
 #'
+#' It imports only the latest calibration for each ITEM_NAME.
+#'
 #' @param item_names A character vector of ITEM_NAMEs as found in Lida 500 database.
 #' @param conn a connection object like the one returned from connect_to_sk_dbi
 #'
 #' @return a tibble of class "l500_cal"
 #' @export
 imp_l500_cal <- function(item_names, conn = connect_to_l500_dbi()){
-  out <- dplyr::tbl(conn_l500, "Calibrate") %>%
+
+  # Probablemente seria mejor buscar la calibración que está activa en el
+  # instrumento (Tabla CalibrateParam, UsingF == TRUE)
+
+  out <- dplyr::tbl(conn, "Calibrate") %>%
     dplyr::filter(Method %in% item_names) %>%
     dplyr::collect() %>%
     dplyr::filter(CaliNo == max(CaliNo))
@@ -152,5 +158,78 @@ h_l500_format_curve <- function(ABS_Prim, ABS_Sec){
       cycle = 1:dplyr::n(),
       abs_dif = .data$abs1 - .data$abs2
     )
+}
+
+
+# WIP ----
+
+#' Import the item parameters from Lida 500 database
+#'
+#' @param conn a connection object like the one returned from connect_to_l500_dbi
+#'
+#' @return a tibble of class "l500_items"
+#' @export
+imp_l500_items <- function(conn = connect_to_l500_dbi()){
+
+  tbl_Methodologies <- dplyr::collect(dplyr::tbl(conn, "Methodologies"))
+
+  l500_wl <- c("340", "405", "450", "505", "540", "570", "600", "635", "670",
+               "700", "760", "795", NA)
+
+  out <- tbl_Methodologies %>%
+    dplyr::mutate(
+      instrument = "Lida 500"
+    ) %>%
+    dplyr::left_join(
+      tibble::tibble(
+        Reaction_Type = 0:2,
+        reaction_type = c("Endpoint", "Two point", "Rate")
+      ),
+      by = dplyr::join_by(Reaction_Type)
+    ) %>%
+    dplyr::left_join(
+      tibble::tibble(
+        Blank_Type = 0:4,
+        blank_type = c("No", "Reagent", "Sample", "Pre-blank", "Reagent + Pre-blank")
+      ),
+      by = dplyr::join_by(Blank_Type)
+    ) %>%
+    dplyr::left_join(
+      tibble::tibble(
+        Wavelength1 = 0:12,
+        wl1 = l500_wl
+      ),
+      by = dplyr::join_by(Wavelength1)
+    ) %>%
+    dplyr::left_join(
+      tibble::tibble(
+        Wavelength2 = 0:12,
+        wl2 = l500_wl
+      ),
+      by = dplyr::join_by(Wavelength2)
+    ) %>%
+    dplyr::left_join(
+      tibble::tibble(
+        Calculate_Type = 0:11,
+        calibration_method = c(
+          "Factor",
+          "Single-point Linear",
+          "Multi-point Linear",
+          "Multi-point Polyline",
+          "Logarithmic",
+          "Exponential",
+          "Logistic-Log 4P",
+          "Logistic-Log 5P",
+          "Exponential 5P",
+          "Polynomial 5P",
+          "Parabola",
+          "Spline"
+        )
+      ),
+      by = dplyr::join_by(Calculate_Type)
+    )
+
+  structure(out, class = c("l500_items", class(out)))
+
 }
 

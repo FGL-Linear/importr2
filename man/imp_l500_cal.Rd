@@ -15,5 +15,5 @@ imp_l500_cal(item_names, conn = connect_to_l500_dbi())
 a tibble of class "l500_cal"
 }
 \description{
-Import calibration results from Lida 500 database.
+It imports only the latest calibration for each ITEM_NAME.
 }

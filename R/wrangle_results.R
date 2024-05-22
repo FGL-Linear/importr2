@@ -9,7 +9,11 @@ wrangle_results <- function(x, ...){
   UseMethod("wrangle_results")
 }
 
+#' @export
 validate_wrangled_results <- function(x){
+
+  # Pendiente de implementar?----
+
   stopifnot("wrangled_results" %in% class(x))
 
   expected_colnames <- c("date", "method", "instrument", "sample", "od", "result")
