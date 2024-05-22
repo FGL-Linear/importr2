@@ -40,7 +40,7 @@ wrangle_items.sk_items <- function(x, ...){
       corr_b1 = CORR_A
     ) %>%
     dplyr::mutate(
-      v_s = v_s/10
+      v_s = v_s/10,
     )
 
   structure(wrangled, class = c("wrangled_items", class(wrangled)))
@@ -76,6 +76,13 @@ wrangle_items.l500_items <- function(x, ...){
       factor = Factor,
       corr_b0 = B,
       corr_b1 = K
+    ) %>%
+    dplyr::rowwise() %>% # El siguiente mutate convierte los segundos en ciclos
+    dplyr::mutate(
+      sub_start = if(sub_start == 1){NA}else{sub_start/10},
+      sub_end = if(sub_end == 3){NA}else{sub_end/10},
+      main_start = if(v_r2 == 0){main_start/10 + 17 } else { main_start/10 + 46 },
+      main_end = if(v_r2 == 0){main_end/10 + 17 } else { main_end/10 + 46 }
     )
 
   structure(wrangled, class = c("wrangled_items", class(wrangled)))

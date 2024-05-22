@@ -113,11 +113,14 @@ instrument <- "Kroma"
 
 #### ----
 
-l500_res <- imp_l500_results() %>%
-  dplyr::filter(stringr::str_starts(Method, "MgBRtodo")) %>%
-  wrangle_results()
+wrangle_items(imp_l500_items()) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    sub_start = if(sub_start == 1){NA}else{sub_start/10},
+    sub_end = if(sub_end == 3){NA}else{sub_end/10},
+    main_start = if(v_r2 == 0){main_start/10 + 17 } else { main_start/10 + 46 },
+    main_end = if(v_r2 == 0){main_end/10 + 17 } else { main_end/10 + 46 }
+  ) %>%
+  View()
 
-l500_cal <- imp_l500_cal(unique(l500_res$method)) %>%
-  wrangle_cal()
-
-
+wrangle_items(imp_l500_items())

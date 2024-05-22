@@ -160,9 +160,6 @@ h_l500_format_curve <- function(ABS_Prim, ABS_Sec){
     )
 }
 
-
-# WIP ----
-
 #' Import the item parameters from Lida 500 database
 #'
 #' @param conn a connection object like the one returned from connect_to_l500_dbi
