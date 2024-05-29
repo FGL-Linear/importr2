@@ -21,8 +21,19 @@
 imp_sk_results <- function(conn = connect_to_sk_dbi()){
 
   results <- dplyr::collect(dplyr::tbl(conn, "ResultLog"))
+  rc <- dplyr::collect(dplyr::tbl(conn, "RC_OD")) %>%
+    dplyr::group_by(RC_NO) %>%
+    dplyr::summarise(
+      cycle = paste0(CYCLE, collapse = ","),
+      abs1 = paste0(COL1_SEL, collapse = ","),
+      abs2 = paste0(COL2_SEL, collapse = ",")
+    )
 
-  structure(results, class = c("sk_results", class(results)))
+
+  out <- dplyr::left_join(results, rc)
+
+
+  structure(out, class = c("sk_results", class(out)))
 }
 
 

@@ -3,7 +3,7 @@
 #' @param x data imported from an instrument database
 #' @param ... additional arguments used by methods
 #'
-#' @return a tibble with columns 'date', 'method', 'instrument', 'sample' and 'result'.
+#' @return a tibble with columns 'date', 'method', 'instrument', 'sample', 'result', 'cycle', 'abs1' and 'abs2'.
 #' @export
 wrangle_results <- function(x, ...){
   UseMethod("wrangle_results")
@@ -16,7 +16,8 @@ validate_wrangled_results <- function(x){
 
   stopifnot("wrangled_results" %in% class(x))
 
-  expected_colnames <- c("date", "method", "instrument", "sample", "od", "result")
+  expected_colnames <- c("date", "method", "instrument", "sample", "od", "result",
+                         "cycle", "abs1", "abs2")
 
   stopifnot(all(colnames(x) %in% expected_colnames))
   stopifnot(all(expected_colnames %in% colnames(x)))
@@ -34,13 +35,16 @@ wrangle_results.l500_results <- function(x){
       id_rc,
       od = "OD",
       result = "Result",
-      date = "TestDate"
+      date = "TestDate",
+      abs1 = ABS_Prim,
+      abs2 = ABS_Sec
     ) %>%
     dplyr::mutate(
-      instrument = "Lida 500"
+      instrument = "Lida 500",
+      cycle = paste0(1:77, collapse = ",")
     ) %>%
     dplyr::relocate(
-      "date", "method", "instrument", "sample", "id_rc", "od", "result"
+      "date", "method", "instrument", "sample", "id_rc", "od", "result", "cycle", "abs1", "abs2"
     )
 
   class(wrangled) <- c("wrangled_results", class(wrangled))
@@ -68,7 +72,10 @@ wrangle_results.sk_results <- function(x){
       sample,
       id_rc,
       od = "ABS",
-      result = "RESULT"
+      result = "RESULT",
+      cycle,
+      abs1,
+      abs2
     )
 
   class(wrangled) <- c("wrangled_results", class(wrangled))
@@ -99,7 +106,13 @@ wrangle_results.kr_results <- function(x, instrument = c("Kroma", "Kroma Plus"))
       id_rc,
       od = od,
       result = "FinalResult"
+    ) %>%
+    dplyr::mutate(
+      cycle = NA,
+      abs1 = NA,
+      abs2 = NA
     )
+
   class(wrangled) <- c("wrangled_results", class(wrangled))
 
   wrangled
@@ -169,7 +182,10 @@ wrangle_results.l300_results <- function(x){
       instrument = "Lida 300",
       od = fOD,
       result = fResult,
-      date = lubridate::ymd(as.character(lMadeDate))
+      date = lubridate::ymd(as.character(lMadeDate)),
+      cycle = paste0(1:168, collapse = ","),
+      abs1 = stringr::str_remove(ABSPrim, pattern = "[,]{1,}$"),
+      abs2 = stringr::str_remove(ABSPrim, pattern = "[,]{1,}$"),
     ) %>%
     dplyr::select(
       date,
@@ -178,13 +194,17 @@ wrangle_results.l300_results <- function(x){
       sample = SplID,
       id_rc,
       od,
-      result
+      result,
+      cycle,
+      abs1,
+      abs2
     ) %>%
     dplyr::mutate(
       instrument = "Lida 300"
     ) %>%
     dplyr::relocate(
-      "date", "method", "instrument", "sample", "id_rc", "od", "result"
+      "date", "method", "instrument", "sample", "id_rc", "od", "result",
+      "cycle", "abs1", "abs2"
     )
 
   class(wrangled) <- c("wrangled_results", class(wrangled))

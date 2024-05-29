@@ -19,17 +19,22 @@ cal_l500 <- imp_l500_cal("CRP TURBI")
 items_l500 <- imp_l500_items(conn_l500)
 DBI::dbDisconnect(conn_l500)
 
-res_all <- dplyr::bind_rows(
-  wrangle_results(res_kr, "Kroma"),
-  wrangle_results(res_sk),
-  wrangle_results(res_l500)
-) %>%
-  h_clean_methods()
+conn_l300 <- connect_to_l300_dbi()
+res_l300 <- imp_l300_results(conn_l300)
+cal_l300 <- imp_l500_cal("CRP TURBI")
+items_l300 <- imp_l500_items(conn_l300)
+DBI::dbDisconnect(conn_l300)
 
 res_all <- dplyr::bind_rows(
   wrangle_results(res_kr, "Kroma"),
   wrangle_results(res_sk),
-  wrangle_results(res_l500)
+  wrangle_results(res_l500),
+  wrangle_results(res_l300)
+) %>%
+  h_clean_methods()
+
+res_all <- dplyr::bind_rows(
+  wrangle_results(res_l300)
 ) %>%
   h_clean_methods()
 
@@ -127,36 +132,37 @@ wrangle_items(imp_l500_items())
 
 
 #### ----
+l300_res <- imp_l300_results()
+
+wrangle_results(l300_res)
 
 
-sk_res <- imp_sk_results()
-
-sk_rc <- imp_sk_rc(sk_res)
-
-wran_sk_rc <- wrangle_rc(sk_rc)
-
-wran_sk_res <- wrangle_results(sk_res)
-
-wran_sk_res %>%
-  dplyr::left_join(wran_sk_rc)
-
+l300_rc <- tibble::tibble(
+  time_list = as.double(stringr::str_split_1(l300_res[1,]$TimeList, ",")),
+  abs1 = as.double(stringr::str_split_1(l300_res[1,]$ABSPrim, ",")),
+  abs2 = as.double(stringr::str_split_1(l300_res[1,]$ABSSec, ","))
+)
 
 
 
-imp_sk_results2 <- function(conn = connect_to_sk_dbi()){
+delta_time <- tibble::tibble(
+  delta_time = as.double(l300_rc$time_list[2:168]) - as.double(l300_rc$time_list[1:167])
+)
 
-  results <- dplyr::collect(dplyr::tbl(conn, "ResultLog"))
-  rc <- dplyr::collect(dplyr::tbl(conn, "RC_OD")) %>%
-    dplyr::group_by(RC_NO) %>%
-    dplyr::summarise(
-      cycle = paste0(CYCLE, collapse = ","),
-      abs1 = paste0(COL1_SEL, collapse = ","),
-      abs2 = paste0(COL2_SEL, collapse = ",")
-    )
+delta_time <- delta_time %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    delta_time = if(delta_time < 0 ){delta_time + 60} else {delta_time}
+  )
+
+l300_rc$time <- c(0, cumsum(delta_time$delta_time), NA)
+
+l300_rc %>%
+  ggplot2::ggplot(
+    mapping = ggplot2::aes(x = 1:169, y = abs1)
+  ) +
+  ggplot2::geom_line()
 
 
-    dplyr::left_join(results, rc)
-
-
-  structure(results, class = c("sk_results", class(results)))
-}
+l300_res[1,]$ABSPrim %>%
+  stringr::str_remove(pattern="[,]{1,}$")
