@@ -124,3 +124,39 @@ wrangle_items(imp_l500_items()) %>%
   View()
 
 wrangle_items(imp_l500_items())
+
+
+#### ----
+
+
+sk_res <- imp_sk_results()
+
+sk_rc <- imp_sk_rc(sk_res)
+
+wran_sk_rc <- wrangle_rc(sk_rc)
+
+wran_sk_res <- wrangle_results(sk_res)
+
+wran_sk_res %>%
+  dplyr::left_join(wran_sk_rc)
+
+
+
+
+imp_sk_results2 <- function(conn = connect_to_sk_dbi()){
+
+  results <- dplyr::collect(dplyr::tbl(conn, "ResultLog"))
+  rc <- dplyr::collect(dplyr::tbl(conn, "RC_OD")) %>%
+    dplyr::group_by(RC_NO) %>%
+    dplyr::summarise(
+      cycle = paste0(CYCLE, collapse = ","),
+      abs1 = paste0(COL1_SEL, collapse = ","),
+      abs2 = paste0(COL2_SEL, collapse = ",")
+    )
+
+
+    dplyr::left_join(results, rc)
+
+
+  structure(results, class = c("sk_results", class(results)))
+}
