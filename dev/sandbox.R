@@ -136,24 +136,41 @@ l300_res <- imp_l300_results()
 
 wrangle_results(l300_res)
 
+i <- 1000
 
-l300_rc <- tibble::tibble(
-  time_list = as.double(stringr::str_split_1(l300_res[1,]$TimeList, ",")),
-  abs1 = as.double(stringr::str_split_1(l300_res[1,]$ABSPrim, ",")),
-  abs2 = as.double(stringr::str_split_1(l300_res[1,]$ABSSec, ","))
+N <- dim(l300_res)[1]
+
+seconds_per_cycle <- tibble::tibble(
+  n = 1:N,
+  seconds = NA_real_
 )
 
+for (i in seconds_per_cycle$n) {
 
-
-delta_time <- tibble::tibble(
-  delta_time = as.double(l300_rc$time_list[2:168]) - as.double(l300_rc$time_list[1:167])
-)
-
-delta_time <- delta_time %>%
-  dplyr::rowwise() %>%
-  dplyr::mutate(
-    delta_time = if(delta_time < 0 ){delta_time + 60} else {delta_time}
+  l300_rc <- tibble::tibble(
+    time_list = as.double(stringr::str_split_1(l300_res[i,]$TimeList, ",")),
+    abs1 = as.double(stringr::str_split_1(l300_res[i,]$ABSPrim, ",")),
+    abs2 = as.double(stringr::str_split_1(l300_res[i,]$ABSSec, ","))
   )
+
+  delta_time <- tibble::tibble(
+    delta_time = as.double(l300_rc$time_list[2:168]) - as.double(l300_rc$time_list[1:167])
+  )
+
+  delta_time <- delta_time %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      delta_time = if(delta_time < 0 ){delta_time + 60} else {delta_time}
+    )
+
+  seconds_per_cycle$seconds[i] <- mean(delta_time$delta_time)
+
+}
+
+seconds_per_cycle %>%
+  dplyr::filter(seconds < 10) %>%
+  dplyr::pull(seconds) %>%
+  summary()
 
 l300_rc$time <- c(0, cumsum(delta_time$delta_time), NA)
 

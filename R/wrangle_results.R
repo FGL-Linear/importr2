@@ -185,7 +185,7 @@ wrangle_results.l300_results <- function(x){
       date = lubridate::ymd(as.character(lMadeDate)),
       cycle = paste0(1:168, collapse = ","),
       abs1 = stringr::str_remove(ABSPrim, pattern = "[,]{1,}$"),
-      abs2 = stringr::str_remove(ABSPrim, pattern = "[,]{1,}$"),
+      abs2 = stringr::str_remove(ABSSec, pattern = "[,]{1,}$"),
     ) %>%
     dplyr::select(
       date,
