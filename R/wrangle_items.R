@@ -6,6 +6,8 @@
 #' @return a tibble with columns ... (WIP).
 #' @export
 wrangle_items <- function(x, ...){
+  # OJO: No guardo los datos del tipo de mixing ----
+
   UseMethod("wrangle_items")
 }
 

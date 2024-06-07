@@ -183,3 +183,32 @@ l300_rc %>%
 
 l300_res[1,]$ABSPrim %>%
   stringr::str_remove(pattern="[,]{1,}$")
+
+
+# OJO PENDIENTE ----
+# Durante la asignación de valores de Magnesio al STDi multiparamétrico he visto
+# que no se puede calcular la OD a partir de las curvas de reacción de los Lida
+# si no se incluye también el blanco de reactivo (en aquellas aplicaciones que
+# lo utilizan).
+#
+# Ver: L:/R+D+I/Bioquimica/R+D/Estandarización de reactivos de Química Clínica/2024-05-31 - assignacion STDi Mg/asign_draft.R
+# browseURL("L:/R+D+I/Bioquimica/R+D/Estandarización de reactivos de Química Clínica/2024-05-31 - assignacion STDi Mg/asign_draft.R")
+# Para tener todo el contexto, se deberían importar también las curvas de reacción del blanco de reactivo...
+# pero no creo que sea buena idea meterlo en la misma tabla que los resultados importados al no tener una
+# relación one-to-one.
+#
+# Aunque no cuadre de cara a importarlo a una base de datos, quizás podría mirar
+# de crear funciones que importen en un solo objeto todo lo necesario para
+# recalcular los resultados. Su estructura no tiene por que ser directamente
+# como las tablas de una db. Por ejemplo, en vez de tener las curvas de reacción
+# como strings separados por comas, podrían ser un tibble nested.
+
+
+
+#----
+dplyr::bind_rows(
+  dplyr::filter(wrangle_items(imp_sk_items()), method == "MgBRtodo"),
+  dplyr::filter(wrangle_items(imp_l500_items()), method == "MgBRtodo")
+)
+
+
