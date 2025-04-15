@@ -35,7 +35,7 @@ wrangle_results(x, ...)
 \item{instrument}{either "Kroma" or "Kroma Plus"}
 }
 \value{
-a tibble with columns 'date', 'method', 'instrument', 'sample' and 'result'.
+a tibble with columns 'date', 'method', 'instrument', 'sample', 'result', 'cycle', 'abs1' and 'abs2'.
 }
 \description{
 Wrangle results imported from different instrument databases into a common data structure

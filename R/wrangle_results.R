@@ -178,7 +178,7 @@ wrangle_results.csv_kr_res <- function(x, instrument = c("Kroma", "Kroma Plus"))
 wrangle_results.l300_results <- function(x){
   wrangled <- x %>%
     dplyr::mutate(
-      id_rc = paste0("res",lTestDate,lTestTime),
+      id_rc = paste0("res",lTestDate,lTestTime,TestCounts),
       instrument = "Lida 300",
       od = fOD,
       result = fResult,
