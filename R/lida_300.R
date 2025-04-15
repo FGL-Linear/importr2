@@ -67,19 +67,55 @@ imp_l300_items <- function(conn = connect_to_l300_dbi()){
 
   tbl_ItemInfo <- dplyr::collect(dplyr::tbl(conn, "ItemInfo"))
 
-  tbl_ItemInfo %>%
-    dplyr::select(ItemName, iLength1, iLength2, iTestMethod, iCalMethod, iBlank) %>%
-    View()
-
-  # VOY POR AQUí ----
-  # Tocará relacionar los códigos numéricos de wl, test method, cal method, blank
-  # con su significado.
   l300_wl <- tibble::tibble(
     id_wl = 0:8,
     wl = c(NA, "340", "405", "450", "510", "546", "578", "630", "670")
   )
 
-  DBI::dbListTables(conn)
+  l300_reaction_type <- tibble::tibble(
+    iTestMethod = 0:2,
+    reaction_type = c("Endpoint", "Fixed time", "Rate")
+  )
 
+  l300_cal_method <- tibble::tibble(
+    iCalMethod = 0:11,
+    calibration_method = c(
+      "Factor",
+      "Single-point Linear",
+      "Multi-point Linear",
+      "Multi-point Polyline",
+      "Logarithmic",
+      "Exponential",
+      "Logistic-Log 4P",
+      "Logistic-Log 5P",
+      "Exponential 5P",
+      "Polynomial 5P",
+      "Parabola",
+      "Spline"
+    )
+  )
+
+  l300_blank_type <- tibble::tibble(
+    iBlank = 0:4,
+    blank_type = c("No", "Reagent", "Sample", "Pre-blank", "Reagent + Pre-blank")
+  )
+
+  out <- tbl_ItemInfo %>%
+    dplyr::left_join(
+      l300_wl,
+      dplyr::join_by(iLength1 == id_wl)
+    ) %>%
+    dplyr::rename(wl1 = wl) %>%
+    dplyr::left_join(
+      l300_wl,
+      dplyr::join_by(iLength2 == id_wl)
+    ) %>%
+    dplyr::rename(wl2 = wl) %>%
+    dplyr::left_join(l300_reaction_type) %>%
+    dplyr::left_join(l300_cal_method) %>%
+    dplyr::left_join(l300_blank_type)
+
+  structure(out, class = c("l300_items", class(out)))
 
 }
+#imp_l300_items()

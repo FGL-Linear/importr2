@@ -180,9 +180,16 @@ l300_rc %>%
   ) +
   ggplot2::geom_line()
 
+l300_rc %>%
+  ggplot2::ggplot(
+    mapping = ggplot2::aes(x = time, y = abs1)
+  ) +
+  ggplot2::geom_line()
 
 l300_res[1,]$ABSPrim %>%
-  stringr::str_remove(pattern="[,]{1,}$")
+  stringr::str_remove(pattern="[,]{1,}$") %>%
+  stringr::str_split(pattern = ",") %>%
+  .[[1]]
 
 
 # OJO PENDIENTE ----
@@ -196,6 +203,9 @@ l300_res[1,]$ABSPrim %>%
 # Para tener todo el contexto, se deberían importar también las curvas de reacción del blanco de reactivo...
 # pero no creo que sea buena idea meterlo en la misma tabla que los resultados importados al no tener una
 # relación one-to-one.
+#
+# Por otro lado, en la tabla de la aplicación pone el blanco de reactivo (al menos en L500, como RBlank_OD).
+# Puede servir para verificar si la función que cree para calcular el blanco funciona correctamente.
 #
 # Aunque no cuadre de cara a importarlo a una base de datos, quizás podría mirar
 # de crear funciones que importen en un solo objeto todo lo necesario para
@@ -211,4 +221,13 @@ dplyr::bind_rows(
   dplyr::filter(wrangle_items(imp_l500_items()), method == "MgBRtodo")
 )
 
+# ----
 
+imp_sk_items() %>%
+  wrangle_items()
+
+imp_l500_items() %>%
+  wrangle_items()
+
+imp_l300_items() %>%
+  wrangle_items()

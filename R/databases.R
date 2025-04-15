@@ -42,6 +42,7 @@ connect_to_l500_dbi <- function(db_file_path = "D:/Analyzer.mdb")  {
 
 #' @param user username (for now, "fguerrero")
 #' @rdname connect_to_l500_dbi
+#' @export
 connect_to_sk_dbi <- function( user = "fguerrero" ){
 
   keys <- keyring::key_list()
@@ -59,6 +60,7 @@ connect_to_sk_dbi <- function( user = "fguerrero" ){
 }
 
 #' @rdname connect_to_l500_dbi
+#' @export
 connect_to_kr_dbi <- function(db_file_path = "D:/OppLocal - KP.mdb")  {
   # make sure that the file exists before attempting to connect
   if (!file.exists(db_file_path)) {
@@ -79,6 +81,7 @@ connect_to_kr_dbi <- function(db_file_path = "D:/OppLocal - KP.mdb")  {
 }
 
 #' @rdname connect_to_l500_dbi
+#' @export
 connect_to_l300_dbi <- function(db_file_path = "D:/Chemray280.db"){
   # make sure that the file exists before attempting to connect
   if (!file.exists(db_file_path)) {
